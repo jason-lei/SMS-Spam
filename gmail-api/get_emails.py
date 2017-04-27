@@ -1,6 +1,7 @@
 from __future__ import print_function
 import numpy as np
 import pandas as pd
+import pickle
 
 import httplib2
 import os
@@ -66,8 +67,6 @@ def main():
 
     results = service.users().labels().list(userId='me').execute()
     labels = results.get('labels', [])
-
-
     # ***** print out user email labels *****
 
     # if not labels:
@@ -86,10 +85,16 @@ def main():
     messages = ListMessagesMatchingQuery(service, 'me')
     df = pd.DataFrame(data = None, columns=['message'])
     print( "There are %d many messages in your inbox." % len(messages) )
-    for i in range(500):
+    for i in range(100):
         df.loc[i] = GetMessage(service, 'me', messages[i]['id'])['snippet']
 
-    print(df.head(n=50))
+
+    # classify emails 
+    clf  = pickle.load(open("../model/classifier.pkl", "rb"))
+    vect = pickle.load(open("../model/vectorizer.pkl", "rb"))
+    df["class_num"] = clf.predict( vect.transform(df["message"]) )
+    df["class_label"] = df["class_num"].map({0:'ham', 1:"spam"})
+    #df.to_csv("my_email_classification.csv", encoding='utf-8')
 
 if __name__ == '__main__':
     main()
