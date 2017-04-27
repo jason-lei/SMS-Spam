@@ -30,8 +30,11 @@ def signUp():
     vocabulary_to_load =joblib.load('vectorizer.pkl')
     vectorizer2 = TfidfVectorizer(vocabulary=vocabulary_to_load)
     vectorizer2.fit(vocabulary_to_load)
-    text_transformed = vectorizer2.transform(text_df)
-    _output = clf.predict(text_transformed.toarray())
+    text_transformed = vectorizer2.transform(text_df.v2)
+    lf2 = joblib.load('model.pkl')
+    selector = joblib.load('selector.pkl')
+    text_transformed = selector.transform(text_transformed).toarray()
+    _output = clf.predict(text_transformed)
     print(_output)
 
     return render_template('results.html', classification=_output) 
