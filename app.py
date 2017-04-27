@@ -20,19 +20,11 @@ def signUp():
 
     _text = request.form['inputName']
     print(_text)
-    from flask import Flask, jsonify
-    from sklearn.externals import joblib
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.feature_selection import SelectPercentile, f_classif
+    from flask import Flask
     import pandas as pd
     d = {'v2': ("%s" %_text)}
     text_df = pd.DataFrame(data=d, index={0})
-    vocabulary_to_load =joblib.load('vectorizer.pkl')
-    vectorizer2 = TfidfVectorizer(vocabulary=vocabulary_to_load)
-    vectorizer2.fit(vocabulary_to_load)
-    text_transformed = vectorizer2.transform(text_df.v2)
-    lf2 = joblib.load('model.pkl')
-    selector = joblib.load('selector.pkl')
+    text_transformed = vectorizer.transform(text_df.v2)
     text_transformed = selector.transform(text_transformed).toarray()
     _output = clf.predict(text_transformed)
     print(_output)
@@ -41,6 +33,12 @@ def signUp():
 
 if __name__ == "__main__":
 	from sklearn.externals import joblib
-	clf = joblib.load('model.pkl')
+	from sklearn.feature_extraction.text import TfidfVectorizer
+	from sklearn.feature_selection import SelectPercentile, f_classif
+	clf = joblib.load('stored_pickles/model.pkl')
+	selector = joblib.load('stored_pickles/selector.pkl')
+	vocabulary_to_load =joblib.load('stored_pickles/vectorizer.pkl')
+	vectorizer = TfidfVectorizer(vocabulary=vocabulary_to_load)
+	vectorizer.fit(vocabulary_to_load)
 	app.run(debug=True)
     # app.run(port=8080)
