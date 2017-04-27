@@ -27,7 +27,7 @@ def signUp():
     import pandas as pd
     d = {'v2': ("%s" %_text)}
     text_df = pd.DataFrame(data=d, index={0})
-    vocabulary_to_load =joblib.load('vectorizer.pkl')
+    vocabulary_to_load =joblib.load('../model/vectorizer.pkl')
     vectorizer2 = TfidfVectorizer(vocabulary=vocabulary_to_load)
     vectorizer2.fit(vocabulary_to_load)
     text_transformed = vectorizer2.transform(text_df)
@@ -37,7 +37,7 @@ def signUp():
     return render_template('results.html', classification=_output) 
 
 if __name__ == "__main__":
-	from sklearn.externals import joblib
-	clf = joblib.load('model.pkl')
-	app.run(debug=True)
+    from sklearn.externals import joblib
+    clf = joblib.load('../model/classifier.pkl')
+    app.run(debug=True)
     # app.run(port=8080)
