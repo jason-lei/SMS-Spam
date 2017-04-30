@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SMS-Spam Classifier</title>
+
+    <script src="../static/js/jquery-3.1.1.min.js"></script>
+    
+  </head>
+
+  <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-text">
+                        <h1>SMS Spam Classifier</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+ 
+  <body id="page-top" class="index">
+    
+    <!-- Join Section -->
+    <section id="join">
+        <div class="container">
+          <div class="row" align="middle">
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <p>{% include "flash.html" %}</p>
+
+                    <form class="form-signin" action='/classify' method="post">
+                    <label for="inputName" class="sr-only"></label>
+                    <input type="name" name="inputName" id="inputName" class="form-control" placeholder="Enter text here" required autofocus>
+                    <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Classify</button>
+                   
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="join">
+
+        <meta name="google-signin-client_id" 
+        content="408758769479-r945hn2554a61dt28aht6t2t4mkm74n6.apps.googleusercontent.com">
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    </section>
+  </body>
+</html>
