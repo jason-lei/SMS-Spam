@@ -83,11 +83,11 @@ def get_emails():
     #crtLabel = CreateLabel(service, 'me', label)
 
     # ***** getting all email id's from user's inbox *****
-    messages = ListMessagesMatchingQuery(service, 'me')
+    messages = ListMessagesMatchingQuery(service, 'me') 
     df = pd.DataFrame(data = None, columns=['message'])
     print( "There are %d many messages in your inbox." % len(messages) )
-    for i in range(50):
-        df.loc[i] = GetMessage(service, 'me', messages[i]['id'])['snippet']
+    for i in range(50): #get first 50 emails
+        df.loc[i] = GetMessage(service, 'me', messages[i]['id']) ['snippet']
 
     # classify emails 
     clf  = pickle.load(open(
