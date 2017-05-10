@@ -35,11 +35,11 @@ def classify_text():
 
     #return render_template('results.html', classification=_output) 
     if _output[0] == 0: 
-        class_label = 'ham i.e not spam'
-        return render_template('results.html', classification=class_label) 
+        label = 'ham i.e not spam'
+        return render_template('results.html', classification=label) 
     else:
-        class_label = 'spam'
-        return render_template('results.html', classification=class_label) 
+        label = 'spam'
+        return render_template('results.html', classification=label) 
 
 @app.route('/classify_email')
 def classify_email():
@@ -68,8 +68,8 @@ def classify_email():
         df["label"] = df["class_num"].map({0:'ham', 1:"spam"})
 
         #return json.dumps(df.to_json())
-        spam = df.loc[df.class_label=='spam']
-        ham = df.loc[df.class_label=='ham']
+        spam = df.loc[df.label=='spam']
+        ham = df.loc[df.label=='ham']
         return render_template('view_email_results.html',
             tables=[spam.to_html(classes='spam'), ham.to_html(classes='ham')],
             titles = ['na', 'Spam Email', 'Ham Email'] )
