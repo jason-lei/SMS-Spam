@@ -12,7 +12,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import confusion_matrix, classification_report
 
 
-sms = pd.read_csv("../data/spam.csv", usecols=[0, 1], 
+sms = pd.read_csv("../spam.csv", usecols=[0, 1], 
 	header=0, names=['class_label', 'message'], encoding='latin-1')
 
 x = sms.class_label.value_counts()
@@ -44,8 +44,9 @@ clf = MultinomialNB()
 clf.fit(X_train_df,y_train)
 prediction['Multinomial'] = clf.predict(X_test_df)
 #print(clf.score(X_test_df, y_test)
-pickle.dump(clf, open("classifier.pkl", "wb"))
-pickle.dump(vect, open("vectorizer.pkl", "wb"))
+pickle.dump(clf, open("./stored_pickles/classifier.pkl", "wb"))
+pickle.dump(vect, open("./stored_pickles/vectorizer.pkl", "wb"))
+
 
 
 
