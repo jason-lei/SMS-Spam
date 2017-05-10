@@ -7,6 +7,8 @@ import httplib2
 from flask import Flask, render_template, json, request, redirect
 from flask_wtf import Form
 from oauth2client import client
+from gmail_functions import *
+import pandas as pd
 import uuid
 from googleapiclient.discovery import build
 
@@ -45,10 +47,31 @@ def test():
         return flask.redirect(flask.url_for('oauth2callback'))
     else:
         http_auth = credentials.authorize(httplib2.Http())
-        service = build('gmail', 'v1', http_auth)
+        #service = build('gmail', 'v1', http_auth)
+        service = build('gmail', 'v1', credentials=credentials)
         #results = mail.files().list().execute()
         results = service.users().labels().list(userId='me').execute()
-        return json.dumps(results)
+        print('4')
+
+        #messages = ListMessagesMatchingQuery(service, 'me') 
+        response = service.users().messages().list(userId='me',
+                                               q='', maxResults=50).execute()
+        messages = []
+        if 'messages' in response:
+            messages.extend(response['messages'])
+        
+        df = pd.DataFrame(data = None, columns=['message'])
+        for i in range(50): #get first 50 emails
+            df.loc[i] = GetMessage(service, 'me', messages[i]['id']) ['snippet']
+        #return json.dumps(results)
+        df["label"] = clf.predict(selector.transform(vectorizer.transform(df["message"])).toarray())
+        #df["class_label"] = df["class_num"].map({0:'ham', 1:"spam"})
+        #return json.dumps(df.to_json())
+        spam = df.loc[df.label=='spam']
+        ham = df.loc[df.label=='ham']
+        return render_template('view_email_results.html',
+            tables=[spam.to_html(classes='spam'), ham.to_html(classes='ham')],
+            titles = ['na', 'Spam Email', 'Ham Email'] )
 
 @app.route('/oauth2callback')
 def oauth2callback():
