@@ -12,7 +12,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import confusion_matrix, classification_report
 
 
-sms = pd.read_csv("../spam.csv", usecols=[0, 1], 
+sms = pd.read_csv("./spam.csv", usecols=[0, 1], 
 	header=0, names=['class_label', 'message'], encoding='latin-1')
 
 x = sms.class_label.value_counts()
