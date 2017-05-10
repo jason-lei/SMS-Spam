@@ -9,6 +9,7 @@ from oauth2client import client
 from gmail_functions import *
 import pandas as pd
 import uuid
+import pickle
 from googleapiclient.discovery import build
 
 app = flask.Flask(__name__)
@@ -32,7 +33,13 @@ def classify_text():
     _output = clf.predict(vect.transform(text_df.v2))
     print(_output)
 
-    return render_template('results.html', classification=_output) 
+    #return render_template('results.html', classification=_output) 
+    if _output[0] == 0: 
+        class_label = 'ham i.e not spam'
+        return render_template('results.html', classification=class_label) 
+    else:
+        class_label = 'spam'
+        return render_template('results.html', classification=class_label) 
 
 @app.route('/classify_email')
 def classify_email():
@@ -56,11 +63,13 @@ def classify_email():
             df.loc[i] = GetMessage(service, 'me', messages[i]['id']) ['snippet']
         #return json.dumps(results)
         #df["label"] = clf.predict(selector.transform(vectorizer.transform(df["message"])).toarray())
+
         df["class_num"] = clf.predict(vect.transform(df["message"]))
         df["label"] = df["class_num"].map({0:'ham', 1:"spam"})
+
         #return json.dumps(df.to_json())
-        spam = df.loc[df.label=='spam']
-        ham = df.loc[df.label=='ham']
+        spam = df.loc[df.class_label=='spam']
+        ham = df.loc[df.class_label=='ham']
         return render_template('view_email_results.html',
             tables=[spam.to_html(classes='spam'), ham.to_html(classes='ham')],
             titles = ['na', 'Spam Email', 'Ham Email'] )
@@ -85,6 +94,7 @@ if __name__ == "__main__":
     from sklearn.externals import joblib
     from sklearn.feature_extraction.text import TfidfVectorizer
     from sklearn.feature_selection import SelectPercentile, f_classif
+
     import pickle 
     #clf = pickle.load(open('stored_pickles/model.pkl', 'rb'))
     #selector = pickle.load(open('stored_pickles/selector.pkl', 'rb'))
