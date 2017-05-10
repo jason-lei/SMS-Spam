@@ -30,7 +30,7 @@ def classify_text():
     #text_transformed = vectorizer.transform(text_df.v2)
     #text_transformed = selector.transform(text_transformed).toarray()
     #_output = clf.predict(text_transformed)
-    _output = clf.predict(vect.transform(text_df["v2"]))
+    _output = clf.predict(vect.transform(text_df.v2))
     print(_output)
 
     #return render_template('results.html', classification=_output) 
@@ -63,8 +63,10 @@ def classify_email():
             df.loc[i] = GetMessage(service, 'me', messages[i]['id']) ['snippet']
         #return json.dumps(results)
         #df["label"] = clf.predict(selector.transform(vectorizer.transform(df["message"])).toarray())
-        df["label"] = clf.predict(vect.transform(df["message"]))
-        df["class_label"] = df["label"].map({0:'ham', 1:"spam"})
+
+        df["class_num"] = clf.predict(vect.transform(df["message"]))
+        df["label"] = df["class_num"].map({0:'ham', 1:"spam"})
+
         #return json.dumps(df.to_json())
         spam = df.loc[df.class_label=='spam']
         ham = df.loc[df.class_label=='ham']
@@ -92,13 +94,16 @@ if __name__ == "__main__":
     from sklearn.externals import joblib
     from sklearn.feature_extraction.text import TfidfVectorizer
     from sklearn.feature_selection import SelectPercentile, f_classif
-    #clf = joblib.load('stored_pickles/model.pkl')
-    #selector = joblib.load('stored_pickles/selector.pkl')
-    #vocabulary_to_load =joblib.load('stored_pickles/vectorizer.pkl')
+
+    import pickle 
+    #clf = pickle.load(open('stored_pickles/model.pkl', 'rb'))
+    #selector = pickle.load(open('stored_pickles/selector.pkl', 'rb'))
+    #vocabulary_to_load = pickle.load('stored_pickles/vectorizer.pkl')
     #vectorizer = TfidfVectorizer(vocabulary=vocabulary_to_load)
     #vectorizer.fit(vocabulary_to_load)
-    vect =pickle.load(open('./model/vectorizer.pkl', "rb"))
-    clf = pickle.load(open('./model/classifier.pkl', 'rb'))
+
+    vect = pickle.load(open('stored_pickles/vectorizer.pkl', "rb"))
+    clf = pickle.load(open('stored_pickles/classifier.pkl', 'rb'))
     app.secret_key = str(uuid.uuid4())
     app.run(debug=True)
 
