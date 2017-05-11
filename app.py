@@ -74,6 +74,7 @@ def classify_email():
             tables=[spam.to_html(classes='spam'), ham.to_html(classes='ham')],
             titles = ['na', 'Spam Email', 'Ham Email'] )
 
+
 @app.route('/oauth2callback')
 def oauth2callback():
     flow = client.flow_from_clientsecrets(
@@ -90,6 +91,7 @@ def oauth2callback():
         flask.session['credentials'] = credentials.to_json()
         return flask.redirect(flask.url_for('classify_email'))
 
+#@click.argument('HOST', default='0.0.0.0')
 if __name__ == "__main__":
     from sklearn.externals import joblib
     from sklearn.feature_extraction.text import TfidfVectorizer
@@ -105,7 +107,7 @@ if __name__ == "__main__":
     vect = pickle.load(open('stored_pickles/vectorizer.pkl', "rb"))
     clf = pickle.load(open('stored_pickles/classifier.pkl', 'rb'))
     app.secret_key = str(uuid.uuid4())
-    app.run(debug=True, port=8112)
+    app.run(host='0.0.0.0', debug=True, port=8112)
 
 from oauth2client import client
 
