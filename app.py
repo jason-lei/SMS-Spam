@@ -14,7 +14,7 @@ from googleapiclient.discovery import build
 
 app = flask.Flask(__name__)
 
-@app.route('/')
+@app.route('/dickwad')
 def main():
     return render_template('index.html')
 
@@ -41,7 +41,7 @@ def classify_text():
         label = 'spam'
         return render_template('results.html', classification=label) 
 
-@app.route('/classify_email')
+@app.route('/')
 def classify_email():
     if 'credentials' not in flask.session:
         return flask.redirect(flask.url_for('oauth2callback'))
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     vect = pickle.load(open('stored_pickles/vectorizer.pkl', "rb"))
     clf = pickle.load(open('stored_pickles/classifier.pkl', 'rb'))
     app.secret_key = str(uuid.uuid4())
-    app.run( debug=True, port=8112)
+    app.run( debug=True, port=8112, host="0.0.0.0")
 
 from oauth2client import client
 
