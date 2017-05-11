@@ -105,7 +105,7 @@ if __name__ == "__main__":
     vect = pickle.load(open('stored_pickles/vectorizer.pkl', "rb"))
     clf = pickle.load(open('stored_pickles/classifier.pkl', 'rb'))
     app.secret_key = str(uuid.uuid4())
-    app.run(debug=True)
+    app.run(debug=True, port=8112)
 
 from oauth2client import client
 
