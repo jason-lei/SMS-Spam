@@ -107,13 +107,13 @@ if __name__ == "__main__":
     vect = pickle.load(open('stored_pickles/vectorizer.pkl', "rb"))
     clf = pickle.load(open('stored_pickles/classifier.pkl', 'rb'))
     app.secret_key = str(uuid.uuid4())
-    app.run( debug=True, port=8112, host="0.0.0.0")
+    app.run( debug=True, port=8112)
 
 from oauth2client import client
 
 flow = client.flow_from_clientsecrets(
     'client_secrets.json',
     scope='https://www.googleapis.com/auth/gmail.modify',
-    redirect_uri='http://http://data-science-4990-project.science//oauth2callback')
+    redirect_uri='http://localhost/oauth2callback')
 flow.params['access_type'] = 'offline'         # offline access
 flow.params['include_granted_scopes'] = True   # incremental auth
