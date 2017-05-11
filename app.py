@@ -14,7 +14,7 @@ from googleapiclient.discovery import build
 
 app = flask.Flask(__name__)
 
-@app.route('/dickwad')
+@app.route('/')
 def main():
     return render_template('index.html')
 
@@ -41,7 +41,7 @@ def classify_text():
         label = 'spam'
         return render_template('results.html', classification=label) 
 
-@app.route('/')
+@app.route('/classify_email')
 def classify_email():
     if 'credentials' not in flask.session:
         return flask.redirect(flask.url_for('oauth2callback'))
@@ -114,6 +114,6 @@ from oauth2client import client
 flow = client.flow_from_clientsecrets(
     'client_secrets.json',
     scope='https://www.googleapis.com/auth/gmail.modify',
-    redirect_uri='http://localhost:5000/oauth2callback')
+    redirect_uri='http://http://data-science-4990-project.science//oauth2callback')
 flow.params['access_type'] = 'offline'         # offline access
 flow.params['include_granted_scopes'] = True   # incremental auth
