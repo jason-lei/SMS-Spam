@@ -4,7 +4,6 @@ from __future__ import print_function
 import flask
 import httplib2
 from flask import Flask, render_template, json, request, redirect
-from flask_wtf import Form
 from oauth2client import client
 from gmail_functions import *
 import pandas as pd
@@ -27,13 +26,9 @@ def classify_text():
     import pandas as pd
     d = {'v2': ("%s" %_text)}
     text_df = pd.DataFrame(data=d, index={0})
-    #text_transformed = vectorizer.transform(text_df.v2)
-    #text_transformed = selector.transform(text_transformed).toarray()
-    #_output = clf.predict(text_transformed)
+    vect =pickle.load(open('./model/vectorizer.pkl', "rb"))
+    clf = pickle.load(open('./model/classifier.pkl', 'rb'))
     _output = clf.predict(vect.transform(text_df["v2"]))
-    print(_output)
-
-    #return render_template('results.html', classification=_output) 
     if _output[0] == 0: 
         class_label = 'ham i.e not spam'
         return render_template('results.html', classification=class_label) 
@@ -61,11 +56,10 @@ def classify_email():
         df = pd.DataFrame(data = None, columns=['message'])
         for i in range(50): #get first 50 emails
             df.loc[i] = GetMessage(service, 'me', messages[i]['id']) ['snippet']
-        #return json.dumps(results)
-        #df["label"] = clf.predict(selector.transform(vectorizer.transform(df["message"])).toarray())
+        vect =pickle.load(open('./model/vectorizer.pkl', "rb"))
+        clf = pickle.load(open('./model/classifier.pkl', 'rb'))
         df["label"] = clf.predict(vect.transform(df["message"]))
         df["class_label"] = df["label"].map({0:'ham', 1:"spam"})
-        #return json.dumps(df.to_json())
         spam = df.loc[df.class_label=='spam']
         ham = df.loc[df.class_label=='ham']
         return render_template('view_email_results.html',
@@ -89,24 +83,7 @@ def oauth2callback():
         return flask.redirect(flask.url_for('classify_email'))
 
 if __name__ == "__main__":
-    from sklearn.externals import joblib
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.feature_selection import SelectPercentile, f_classif
-    #clf = joblib.load('stored_pickles/model.pkl')
-    #selector = joblib.load('stored_pickles/selector.pkl')
-    #vocabulary_to_load =joblib.load('stored_pickles/vectorizer.pkl')
-    #vectorizer = TfidfVectorizer(vocabulary=vocabulary_to_load)
-    #vectorizer.fit(vocabulary_to_load)
-    vect =pickle.load(open('./model/vectorizer.pkl', "rb"))
-    clf = pickle.load(open('./model/classifier.pkl', 'rb'))
     app.secret_key = str(uuid.uuid4())
-    app.run(debug=True)
+    app.run(debug=True, port=8080)
 
 from oauth2client import client
-
-flow = client.flow_from_clientsecrets(
-    'client_secrets.json',
-    scope='https://www.googleapis.com/auth/gmail.modify',
-    redirect_uri='http://localhost:5000/oauth2callback')
-flow.params['access_type'] = 'offline'         # offline access
-flow.params['include_granted_scopes'] = True   # incremental auth
